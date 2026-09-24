@@ -29,6 +29,39 @@ Open http://127.0.0.1:8000/
 
 Admin panel: `/admin/` (create a superuser: `python manage.py createsuperuser`).
 
+## Viewing the database
+
+The project uses SQLite: `db.sqlite3` in the project root. It is excluded from
+git (see `.gitignore`); recreate it with `migrate` + `seed_data`.
+
+### Django admin (browser)
+
+1. Create an admin account (once):
+   ```bash
+   python manage.py createsuperuser
+   ```
+2. Start the server and open http://127.0.0.1:8000/admin/
+3. Browse **Users** (filter by role), **Classrooms** (assign students), and
+   **Attendance records** (filter by status/date/class, search by student).
+
+### DB Browser for SQLite (desktop GUI)
+
+1. Install from https://sqlitebrowser.org/dl/
+2. **Open Database** → select `db.sqlite3`.
+3. Use **Browse Data** to page through `attendance_user`,
+   `attendance_classroom`, `attendance_classroom_students`, and
+   `attendance_attendancerecord`.
+4. **Execute SQL** example:
+   ```sql
+   SELECT a.date, u.full_name, cl.name, a.status
+   FROM attendance_attendancerecord a
+   JOIN attendance_user u ON u.id = a.student_id
+   JOIN attendance_classroom cl ON cl.id = a.classroom_id
+   ORDER BY a.date DESC;
+   ```
+5. Stop `runserver` before editing/saving data (SQLite file lock). Don't edit
+   `password` columns by hand — use the admin.
+
 ## Features
 
 - **Sign In / Sign Up**: choose Teacher or Student on a single page; register a new account or sign in.
