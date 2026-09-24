@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% block title %}Mark Attendance{% endblock %}
+{% block content %}
+<h1>Mark Attendance</h1>
+<div class="card">
+  <form method="get">
+    <div class="row">
+      <div class="field grow">
+        <label>Classroom</label>
+        <select name="classroom">
+          {% for c in classrooms %}
+            <option value="{{ c.id }}" {% if c.id == classroom.id %}selected{% endif %}>{{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field grow">
+        <label>Date</label>
+        <input type="date" name="date" value="{{ selected_date|date:'Y-m-d' }}" max="{{ today|date:'Y-m-d' }}">
+      </div>
+      <div class="field" style="align-self:flex-end;"><button class="btn-secondary" type="submit">Load</button></div>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <h2>{{ classroom.name }} &mdash; {{ selected_date }}</h2>
+  {% if rows %}
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="classroom" value="{{ classroom.id }}">
+      <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+      <table>
+        <tr><th>Student</th><th>Status</th></tr>
+        {% for row in rows %}
+          <tr>
+            <td>{{ row.student.full_name|default:row.student.username }}</td>
+            <td class="radio-row">
+              {% for value, label in statuses %}
+                <label>
+                  <input type="radio" name="status_{{ row.student.id }}" value="{{ value }}"
+                         {% if row.status == value %}checked{% endif %}> {{ label }}
+                </label>
+              {% endfor %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+      <p style="margin-top:16px;">
+        <button class="btn-secondary" type="button" onclick="setAll('PRESENT')">Set all present</button>
+        <button type="submit">Save attendance</button>
+      </p>
+    </form>
+  {% else %}
+    <p class="muted">This class has no students enrolled. <a href="{% url 'class_edit' classroom.id %}">Edit the class</a> to add students.</p>
+  {% endif %}
+</div>
+
+<script>
+  function setAll(value) {
+    document.querySelectorAll('input[type=radio]').forEach(function (input) {
+      if (input.value === value) input.checked = true;
+    });
+  }
+</script>
+{% endblock %}

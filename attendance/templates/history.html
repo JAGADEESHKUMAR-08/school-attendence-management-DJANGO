@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Attendance History{% endblock %}
+{% block content %}
+<h1>Attendance History</h1>
+<div class="card">
+  <form method="get">
+    <div class="row">
+      <div class="field grow">
+        <label>Classroom</label>
+        <select name="classroom">
+          <option value="">All classes</option>
+          {% for c in classrooms %}
+            <option value="{{ c.id }}" {% if c.id|stringformat:'s' == selected_classroom %}selected{% endif %}>{{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field grow">
+        <label>From</label>
+        <input type="date" name="start" value="{{ start }}">
+      </div>
+      <div class="field grow">
+        <label>To</label>
+        <input type="date" name="end" value="{{ end }}">
+      </div>
+      <div class="field" style="align-self:flex-end;"><button type="submit">Filter</button></div>
+    </div>
+  </form>
+</div>
+
+<div class="card">
+  <table>
+    <tr><th>Date</th><th>Student</th><th>Class</th><th>Status</th><th>Marked by</th></tr>
+    {% for r in records %}
+      <tr>
+        <td>{{ r.date }}</td>
+        <td>{{ r.student }}</td>
+        <td>{{ r.classroom.name }}</td>
+        <td><span class="badge {{ r.status|lower }}">{{ r.get_status_display }}</span></td>
+        <td>{{ r.marked_by|default:"&mdash;" }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5" class="muted">No records found for this period.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

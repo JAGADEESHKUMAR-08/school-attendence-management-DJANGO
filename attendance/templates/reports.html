@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Attendance Reports{% endblock %}
+{% block content %}
+<h1>Attendance Reports</h1>
+<div class="card">
+  <form method="get">
+    <div class="row">
+      <div class="field grow">
+        <label>Classroom</label>
+        <select name="classroom">
+          <option value="">All classes</option>
+          {% for c in classrooms %}
+            <option value="{{ c.id }}" {% if c.id|stringformat:'s' == selected_classroom %}selected{% endif %}>{{ c.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field grow">
+        <label>From</label>
+        <input type="date" name="start" value="{{ start }}">
+      </div>
+      <div class="field grow">
+        <label>To</label>
+        <input type="date" name="end" value="{{ end }}">
+      </div>
+      <div class="field" style="align-self:flex-end;"><button type="submit">Generate</button></div>
+    </div>
+  </form>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="num">{{ totals.percentage }}%</div><div class="lbl">Overall attendance</div></div>
+  <div class="stat"><div class="num">{{ totals.total }}</div><div class="lbl">Days recorded</div></div>
+  <div class="stat"><div class="num" style="color:var(--green)">{{ totals.present }}</div><div class="lbl">Present</div></div>
+  <div class="stat"><div class="num" style="color:var(--amber)">{{ totals.late }}</div><div class="lbl">Late</div></div>
+  <div class="stat"><div class="num" style="color:var(--red)">{{ totals.absent }}</div><div class="lbl">Absent</div></div>
+</div>
+
+<div class="card">
+  <table>
+    <tr><th>Student</th><th>Days</th><th>Present</th><th>Late</th><th>Absent</th><th>Attendance %</th></tr>
+    {% for row in rows %}
+      {% ifchanged row.classroom__name %}
+        <tr class="group-header"><td colspan="6">{{ row.classroom__name }}</td></tr>
+      {% endifchanged %}
+      <tr>
+        <td>{{ row.student__full_name|default:row.student__username }}</td>
+        <td>{{ row.total }}</td>
+        <td>{{ row.present }}</td>
+        <td>{{ row.late }}</td>
+        <td>{{ row.absent }}</td>
+        <td>
+          {% widthratio row.present|add:row.late row.total 100 %}%
+          <span class="muted">(of {{ row.total }})</span>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="muted">No records in this period.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

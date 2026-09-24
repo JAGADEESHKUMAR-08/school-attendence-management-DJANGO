@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}My Attendance{% endblock %}
+{% block content %}
+<h1>My Attendance</h1>
+<div class="stats">
+  <div class="stat"><div class="num">{{ percentage }}%</div><div class="lbl">Attendance %</div></div>
+  <div class="stat"><div class="num" style="color:var(--green)">{{ present }}</div><div class="lbl">Present</div></div>
+  <div class="stat"><div class="num" style="color:var(--amber)">{{ late }}</div><div class="lbl">Late</div></div>
+  <div class="stat"><div class="num" style="color:var(--red)">{{ absent }}</div><div class="lbl">Absent</div></div>
+  <div class="stat"><div class="num">{{ total }}</div><div class="lbl">Total days</div></div>
+</div>
+
+<div class="card">
+  <table>
+    <tr><th>Date</th><th>Class</th><th>Status</th></tr>
+    {% for r in records %}
+      <tr>
+        <td>{{ r.date }}</td>
+        <td>{{ r.classroom.name }}</td>
+        <td><span class="badge {{ r.status|lower }}">{{ r.get_status_display }}</span></td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="3" class="muted">No attendance records yet.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

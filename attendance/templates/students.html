@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Manage Students{% endblock %}
+{% block content %}
+<h1>Manage Students</h1>
+<div class="row">
+  <div class="card grow">
+    <h2>Add student</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      {% for field in form %}
+        <div class="field">
+          <label>{{ field.label }}</label>
+          {{ field }}
+          {{ field.errors }}
+        </div>
+      {% endfor %}
+      <button type="submit">Add student</button>
+    </form>
+  </div>
+  <div class="card grow">
+    <h2>Students ({{ students|length }})</h2>
+    <table>
+      <tr><th>Username</th><th>Name</th><th>Classes</th><th></th></tr>
+      {% for s in students %}
+        <tr>
+          <td>{{ s.username }}</td>
+          <td>{{ s.full_name|default:"&mdash;" }}</td>
+          <td>
+            {% for c in s.classrooms.all %}
+              {{ c.name }}{% if not forloop.last %}, {% endif %}
+            {% empty %}<span class="muted">&mdash;</span>{% endfor %}
+          </td>
+          <td>
+            <form class="inline" method="post" action="{% url 'student_delete' s.id %}"
+                  onsubmit="return confirm('Delete student {{ s.username }}?');">
+              {% csrf_token %}
+              <button class="btn-danger" type="submit">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4" class="muted">No students yet. Use the form to add one.</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

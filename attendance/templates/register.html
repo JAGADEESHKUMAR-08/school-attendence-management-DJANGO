@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up{% endblock %}
+{% block content %}
+<div class="card login-box">
+  <h1>Sign Up</h1>
+  <p class="muted" style="margin-top:-6px;">Create your account.</p>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div class="field">
+      <label>I am a</label>
+      <div class="role-choice">
+        {% for radio in form.role %}
+          <label>{{ radio.tag }} {{ radio.choice_label }}</label>
+        {% endfor %}
+      </div>
+      {{ form.role.errors }}
+    </div>
+    <div class="field">
+      <label>Username</label>
+      {{ form.username }}
+      {{ form.username.errors }}
+    </div>
+    <div class="field">
+      <label>Full name</label>
+      {{ form.full_name }}
+      {{ form.full_name.errors }}
+    </div>
+    <div class="field">
+      <label>Email</label>
+      {{ form.email }}
+      {{ form.email.errors }}
+    </div>
+    <div class="field">
+      <label>Password</label>
+      {{ form.password1 }}
+      {{ form.password1.errors }}
+    </div>
+    <div class="field">
+      <label>Confirm password</label>
+      {{ form.password2 }}
+      {{ form.password2.errors }}
+    </div>
+    <button type="submit" style="width:100%;">Create account</button>
+  </form>
+  <p style="margin-top:16px; text-align:center;">
+    Already have an account? <a href="{% url 'login' %}">Sign In</a>
+  </p>
+</div>
+{% endblock %}
