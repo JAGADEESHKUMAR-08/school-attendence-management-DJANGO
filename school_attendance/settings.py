@@ -131,6 +131,12 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8000',
 ]
 
+# Use app-specific cookie names so other Django projects on the same host
+# (e.g. 127.0.0.1:8000) cannot clash with this one's CSRF/session cookies.
+CSRF_COOKIE_NAME = 'sa_csrftoken'
+SESSION_COOKIE_NAME = 'sa_sessionid'
+CSRF_FAILURE_VIEW = 'attendance.views.csrf_failure'
+
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration

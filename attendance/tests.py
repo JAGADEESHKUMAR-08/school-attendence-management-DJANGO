@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.test import TestCase
+from django.test import Client
 from django.urls import reverse
 from django.utils import timezone
 
@@ -98,6 +99,15 @@ class AttendanceTests(TestCase):
         })
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'registered as a Teacher')
+
+    def test_csrf_failure_redirects_to_login(self):
+        csrf_client = Client(enforce_csrf_checks=True)
+        response = csrf_client.post(reverse('login'), {
+            'role': 'STUDENT',
+            'username': 'x',
+            'password': 'y',
+        })
+        self.assertRedirects(response, reverse('login'))
 
     def test_unique_attendance_per_day(self):
         yesterday = timezone.localdate() - timedelta(days=1)

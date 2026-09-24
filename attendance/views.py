@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from urllib.parse import urlencode
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -76,6 +77,14 @@ def register_view(request):
 def logout_view(request):
     logout(request)
     return redirect('login')
+
+
+def csrf_failure(request, reason=''):
+    """Self-heal a stale/foreign CSRF cookie and send the user back to sign in."""
+    response = redirect('login')
+    response.delete_cookie(settings.CSRF_COOKIE_NAME)
+    messages.warning(request, 'Your sign-in session expired. Please sign in again.')
+    return response
 
 
 # ---------------------------------------------------------------- dashboards

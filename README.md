@@ -15,8 +15,10 @@ Open http://127.0.0.1:8000/
 > **Troubleshooting (CSRF / "site can't be reached"):** use a single host
 > (`127.0.0.1`, not mixed with `localhost`). If another Django project already
 > uses port 8000, run this one on a different port, e.g.
-> `python manage.py runserver 127.0.0.1:8001`. On a CSRF 403, clear the
-> `csrftoken` cookie and hard-refresh (`Ctrl+F5`).
+> `python manage.py runserver 127.0.0.1:8001`. This project uses its own cookie
+> names (`sa_csrftoken`, `sa_sessionid`) so it won't clash with other projects on
+> the same host. If you ever see a CSRF error, you are automatically redirected
+> back to the sign-in page with a fresh token — just sign in again.
 
 ## Demo accounts (after seed_data)
 
