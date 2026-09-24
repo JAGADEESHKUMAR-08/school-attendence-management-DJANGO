@@ -1,0 +1,1 @@
+# school-attendence-management-DJANGO
